@@ -1,4 +1,5 @@
-<script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
 <style>
   .arjs-loader {
@@ -21,32 +22,94 @@
   }
 </style>
 
-<!-- rawgithack development URL -->
-<!--<script src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js'></script>-->
-<script src='../../../../aframe/build/aframe-ar-nft.js'></script>
+<script>
+  window.onload = function(){
+    AFRAME.registerComponent("videoHandler",{
+      init:function(){
+        var marker = this.el;
+        this.video = document.getElementById("my-video");
+        marker.addEventListener("markerFound",function(){
+          this.video.play();
+        }.bind(this));
+        
+        marker.addEventListener("markerLost",function(){
+          this.video.pause();
+          this.video.currentTime = 0;
+        }.bind(this));
+      }
+    })
+  }
+</script>
+<!-- <script>
+  // ビデオ要素を取得
+  var video = document.getElementById("my-video");
 
+  // ビデオ要素に対してクリック（またはタップ）イベントリスナーを追加
+  video.addEventListener('click', function() {
+      // ビデオが再生中でなければ再生を開始
+      if (video.paused) {
+          video.play();
+      } else {
+          video.pause();
+      }
+  });
+</script> -->
 
-<body style='margin : 0px; overflow: hidden;'>
-   <!-- minimal loader shown until image descriptors are loaded -->
+<script> function play() { document.getElementById('video-src').play(); } 
+</script>
+
+<body style="margin : 0px; overflow: hidden;">
+  <button onclick="play()" style="    z-index: 999;
+                                position: relative;
+                                width: 50%;
+                                height: 10%;"> play</button>
+  <!-- minimal loader shown until image descriptors are loaded -->
   <div class="arjs-loader">
     <div>Loading, please wait...</div>
   </div>
-    <a-scene
-        vr-mode-ui='enabled: false;'
-        renderer="logarithmicDepthBuffer: true; precision: medium;"
-        embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false;'>
-
-        <!-- use rawgithack to retrieve the correct url for nft marker (see 'pinball' below) -->
-        <a-nft
-            type='nft' url='./aframe/examples/image-tracking/nft/trex/trex-image/trex'
-            smooth='true' smoothCount='10' smoothTolerance='0.01' smoothThreshold='5'>
-            <a-entity
-                gltf-model='./trex/scene.gltf'
-                scale="5 5 5"
-                position="150 300 -100"
-                >
-            </a-entity>
-        </a-nft>
-		<a-entity camera></a-entity>
-    </a-scene>
+  <a-scene
+    vr-mode-ui="enabled: false;"
+    renderer="logarithmicDepthBuffer: true;"
+    embedded
+    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
+  >
+    <a-assets>
+      <video
+      id="video-src"
+      src="/output/video.mp4"
+      preload="auto"
+      ></video>
+    </a-assets>
+    
+    <a-nft
+      videoHandler
+      type="nft"
+      url="/trex/trex-image/trex"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance="0.01"
+      smoothThreshold="5"
+    >
+    <!-- play-on-marker-found -->
+    <!-- url="/output/marker" -->
+    <!-- url="/trex/trex-image/trex" -->
+      <!-- <a-entity
+        gltf-model="/trex/scene.gltf"
+        scale="5 5 5"
+        position="50 150 0"
+      >
+      
+      </a-entity> -->
+      
+      <a-video
+      id="vid"
+      src="#video-src"
+      width="96" height="54"
+      position="0 0 0"
+      rotation="90 180 0"
+      scale="3 3 3">
+    </a-video>
+    </a-nft>
+    <a-entity camera></a-entity>
+  </a-scene>
 </body>
